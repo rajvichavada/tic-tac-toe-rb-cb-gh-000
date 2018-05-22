@@ -1,14 +1,4 @@
-# Define your WIN_COMBINATIONS constant
-WIN_COMBINATIONS = [
-  [0,1,2], #top rows
-  [3,4,5], ##middel rows
-  [6,7,8], # last rows
-  [0,3,6], #1st columns
-  [1,4,7], #2nd columns
-  [2,5,8], #3rd columns
-  [0,4,8], #1st diagonals (left to right)
-  [2,4,6], #2nd diagonal (right to left)
-]
+WIN_COMBINATIONS = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]
 
 def display_board(board)
   puts " #{board[0]} | #{board[1]} | #{board[2]} "
@@ -22,12 +12,12 @@ def input_to_index(user_input)
   user_input.to_i - 1
 end
 
-def move(board, index, current_player = "X")
+def move(board, index, current_player )
   board[index] = current_player
 end
 
-def position_taken?(board, location)
-  board[location] != " " && board[location] != ""
+def position_taken?(board, index)
+  !(board[index].nil? || board[index] == " ")
 end
 
 def valid_move?(board, index)
@@ -39,7 +29,7 @@ def turn(board)
   input = gets.strip
   index = input_to_index(input)
   if valid_move?(board, index)
-    move(board, index)
+    move(board, index , current_player(board))
     display_board(board)
   else
     turn(board)
@@ -56,29 +46,7 @@ end
 return count
 end
 
-
-def current_player(board)
-if turn_count(board) % 2 == 1
-  return "O"
-end
-if turn_count(board) % 2 == 0
-  return "X"
-end
-
-end
-
-
 def won?(board)
-    ent = []
-    board.select do |i|
-      if i == " "
-        ent << i
-      end
-      end
-      if ent.length == 9
-        return false
-      end
-
       WIN_COMBINATIONS.each do |win_combo|
         index1 = win_combo[0]
         index2 = win_combo[1]
@@ -90,14 +58,12 @@ def won?(board)
           return win_combo
         end
       end
-
-else
-  return false
+      else
+    return false
 end
 
 def full?(board)
-
-  if board.all?{|i| i != " "}
+  if board.all?{|i| i == "X" || i == "O"}
     return true
   else
     return false
@@ -105,47 +71,53 @@ def full?(board)
 end
 
 def draw?(board)
-
-end
-
-def draw?(board)
-  if board.all?{|i| i != " "} && !(won?(board))
+  if !(won?(board)) && full?(board)
     return true
-  end
-  if won?(board)
-    return false
-  end
-  if !(won?(board)) && board.any?{|e| e == " "}
+  else
     return false
   end
 end
 
 
 def over?(board)
-  if won?(board) || full?(board)
+  if won?(board)
     return true
   end
+  if full?(board)
+    return true
+  end
+  return false
 end
 
 def winner(board)
+  if !(won?(board))
+    return nil
+  end
 
-if !(won?(board))
-  return nil
+  if won?(board)
+    return board[won?(board)[0]]
+  else
+    return nil
+  end
 end
 
-if won?(board)
-  return board[won?(board)[0]]
-else
-  return nil
+def current_player(board)
+  if turn_count(board) % 2 == 1
+    return "O"
+  end
+  if turn_count(board) % 2 == 0
+    return "X"
+  end
 end
-
-end
-
 
 def play(board)
-  x=0
-  until x == 9
+  until over?(board) || draw?(board)
     turn(board)
-    x+=1
+  end
+  if won?(board)
+    puts "Congratulations #{winner(board)}!"
+  end
+  if draw?(board)
+    puts "Cat's Game!"
   end
 end
