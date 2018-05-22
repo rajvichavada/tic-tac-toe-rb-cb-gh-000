@@ -46,7 +46,7 @@ def turn(board)
   end
 end
 
-ef turn_count(board)
+def turn_count(board)
   count = 0
 board.each do |position|
   if position != " "
