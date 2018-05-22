@@ -1,4 +1,4 @@
-equire_relative '../lib/tic_tac_toe.rb'
+require_relative '../lib/tic_tac_toe.rb'
 
 describe './lib/tic_tac_toe.rb' do
   describe '#play' do
